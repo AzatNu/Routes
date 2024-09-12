@@ -1,0 +1,166 @@
+.TodolistCard {
+    display: column;
+    justify-content: center;
+    align-items: center;
+    width: 1100px;
+    height: 700px;
+    margin: 0 auto;
+    margin-top: 20px;
+    background-color: lineral-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.2) 0%,
+        rgba(255, 255, 255, 0.1) 100%
+    );
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+.buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+    margin-top: 10px;
+}
+.title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100px;
+    font-size: 40px;
+    background: linear-gradient(to left, #5250d8, #706ab9, #0b92b4);
+    border-radius: 15px;
+}
+.item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 500px;
+    margin-top: 5px;
+
+    border-radius: 10px;
+}
+.todos-content {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    width: 100%;
+    height: 500px;
+    margin-top: 5px;
+    background-color: rgba(255, 255, 255, 0.226);
+    border-radius: 10px;
+    font-size: 25px;
+    padding: 5px;
+}
+
+.Edit-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 50px;
+    background-color: rgb(199, 162, 41);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-left: 5px;
+    font-size: 25px;
+    margin-right: 5px;
+    outline: none;
+}
+.Edit-button:hover {
+    animation: grow 0.1s linear forwards;
+}
+
+@keyframes grow {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.1);
+    }
+}
+.Delete-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 50px;
+    background-color: #dd1111;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-left: 5px;
+    font-size: 25px;
+    margin-right: 5px;
+    text-decoration: underline #dd1111;
+}
+
+.Delete-button:hover {
+    animation: grow 0.1s linear forwards;
+}
+.Back-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 50px;
+    background-color: #11dd11;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-left: 5px;
+    font-size: 35px;
+    margin-right: 5px;
+    text-decoration: underline #11dd11;
+}
+
+.Back-button:hover {
+    animation: grow 0.1s linear forwards;
+}
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(84, 99, 99);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+}
+
+.modal-content {
+    background-color: rgb(255, 255, 255);
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.modal-input {
+    width: 90%;
+    height: 30px;
+    border-radius: 10px;
+    padding: 0 10px;
+    margin-bottom: 10px;
+    border: none;
+    outline: none;
+    background: rgb(148, 172, 185);
+}
+
+.modal-button {
+    width: 100%;
+    height: 30px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
