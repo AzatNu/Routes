@@ -1,23 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRequestGetTodoModule, useRequestAddTodoModule } from "../hooks";
 import style from "./MainPage.module.css";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
-export const MainPage = ({
-    TODOLIST,
-    setTODOLIST,
-    refreshPage,
-    setRefreshPage,
-    sortButtonClicked,
-    setSortButtonClick,
-    addInputValue,
-    setAddInputValue,
-    errorMessage,
-    setErrorMessage,
-    Id,
-    setId,
-}) => {
-    const navigate = useNavigate();
+export const MainPage = () => {
+    const [TODOLIST, setTODOLIST] = useState([]);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [addInputValue, setAddInputValue] = useState("");
+    const [refreshPage, setRefreshPage] = useState(false);
+    const [sortButtonClicked, setSortButtonClick] = useState(false);
+    const [Id, setId] = useState(0);
+
     useEffect(() => {
         sortTODOLIST();
     }, [sortButtonClicked]);
@@ -25,7 +18,8 @@ export const MainPage = ({
     const { requestAddTodo, isAdding } = useRequestAddTodoModule(
         TODOLIST,
         setTODOLIST,
-        setErrorMessage
+        setErrorMessage,
+        isLoading
     );
 
     const sortTODOLIST = () => {
@@ -53,8 +47,12 @@ export const MainPage = ({
 
     return (
         <div className={style["App"]}>
-            {isLoading && <div className={style["loader"]}></div>}
-            {errorMessage !== "" && (
+            {isLoading && (
+                <div className={style["loader-background"]}>
+                    <div className={style["loader"]}></div>
+                </div>
+            )}
+            {!isLoading && errorMessage !== "" && (
                 <div className={style["errorWindow"]}>
                     <h2>{errorMessage}</h2>
                     <button

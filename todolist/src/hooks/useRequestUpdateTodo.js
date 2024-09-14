@@ -1,25 +1,32 @@
-export const useRequestUpdateTodoModule = (
-    TODOLIST,
-    setTODOLIST,
-    setErrorMessage,
+export const useRequestUpdateTodoModule = ({
+    setTodo,
+    todo,
+    id,
+    setUpdateButtonClick,
+    setCardErrorMessage,
     setRefreshPage,
-    refreshPage
-) => {
-    const requestUpdateTodo = (updatedValue, id) => {
-        if (updatedValue === "") {
-            setErrorMessage("Название задачи не может быть пустым");
+    refreshPage,
+    setIsLoading,
+}) => {
+    const requestUpdateTodo = (updatedInputValue) => {
+        setIsLoading(true);
+        if (updatedInputValue.trim() === "") {
+            setCardErrorMessage("Название задачи не может быть пустым");
+            setIsLoading(false);
             return;
-        } else if (
-            TODOLIST.find(
-                (item) =>
-                    item.title.trim().toLowerCase() ===
-                    updatedValue.trim().toLowerCase()
-            )
-        ) {
-            setErrorMessage("Задача с таким названием уже существует");
+        } else if (updatedInputValue.length > 1200) {
+            setCardErrorMessage("Слишком длинное название задачи");
+            setIsLoading(false);
             return;
-        } else if (updatedValue.length > 1200) {
-            setErrorMessage("Слишком длинное название задачи");
+        } else if (updatedInputValue.length < 3) {
+            setCardErrorMessage("Слишком короткое название задачи");
+            setIsLoading(false);
+            return;
+        } else if (updatedInputValue.trim() === todo.title.trim()) {
+            setCardErrorMessage(
+                "Новое название не должно совпадать с текущим названием"
+            );
+            setIsLoading(false);
             return;
         } else {
             fetch(`http://localhost:3005/todos/${id}`, {
@@ -27,23 +34,17 @@ export const useRequestUpdateTodoModule = (
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    title: updatedValue,
-                }),
+                body: JSON.stringify({ title: updatedInputValue }),
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    setTODOLIST(
-                        TODOLIST.map((item) =>
-                            item.id === id
-                                ? { ...item, title: updatedValue }
-                                : item
-                        )
-                    );
+                    setTodo(data);
                 })
                 .finally(() => {
                     setRefreshPage(!refreshPage);
-                    setErrorMessage("Задача обновлена");
+                    setUpdateButtonClick(false);
+                    setIsLoading(false);
+                    setCardErrorMessage("Задача обновлена");
                 });
         }
     };

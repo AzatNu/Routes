@@ -1,7 +1,7 @@
 export const useRequestDeleteTodoModule = (
     setRefreshPage,
     refreshPage,
-    setErrorMessage
+    setCardErrorMessage
 ) => {
     const requestDeleteTodo = (value) => {
         fetch(`http://localhost:3005/todos/${value}`, {
@@ -11,7 +11,7 @@ export const useRequestDeleteTodoModule = (
             },
         }).finally(() => {
             setRefreshPage(!refreshPage);
-            setErrorMessage("Задача удалена");
+            setCardErrorMessage("Задача удалена");
         });
     };
     return {

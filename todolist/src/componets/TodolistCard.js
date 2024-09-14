@@ -1,119 +1,155 @@
-import styel from "./Todolist.module.css";
+import { NavLink, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import {
-    useRequestDeleteTodoModule,
     useRequestUpdateTodoModule,
+    useRequestDeleteTodoModule,
 } from "../hooks";
-import { useNavigate } from "react-router-dom";
-import { NavLink } from "react-router-dom";
-export const TodolistCard = ({
-    TODOLIST,
-    id,
-    setUpdateInputValue,
-    setUpdateButtonClick,
-    setUpdateId,
-    setTODOLIST,
-    setErrorMessage,
-    setRefreshPage,
-    refreshPage,
-    updateButtonClicked,
-    updateInputValue,
-}) => {
-    const getTodoById = TODOLIST.find((item) => item.id === id);
+import style from "./Todolist.module.css";
+
+export const TodolistCard = () => {
+    const { id } = useParams();
+    const [todo, setTodo] = useState([]);
+    const [updateInputValue, setUpdateInputValue] = useState("");
+    const [updateButtonClicked, setUpdateButtonClick] = useState(false);
+    const [cardErrorMessage, setCardErrorMessage] = useState("");
+    const [refreshPage, setRefreshPage] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    useEffect(() => {
+        setIsLoading(true);
+        fetch(`http://localhost:3005/todos/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => setTodo(data))
+            .finally(() => {
+                setIsLoading(false);
+            });
+    }, [id, refreshPage]);
+
+    const { requestUpdateTodo } = useRequestUpdateTodoModule({
+        setTodo,
+        todo,
+        id,
+        setUpdateButtonClick,
+        setCardErrorMessage,
+        setRefreshPage,
+        refreshPage,
+        setIsLoading,
+    });
     const { requestDeleteTodo } = useRequestDeleteTodoModule(
         setRefreshPage,
         refreshPage,
-        setErrorMessage
+        setCardErrorMessage
     );
-    const { requestUpdateTodo } = useRequestUpdateTodoModule(
-        TODOLIST,
-        setTODOLIST,
-        setErrorMessage,
-        setRefreshPage,
-        refreshPage
-    );
+    console.log(isLoading);
 
     return (
-        <div className={styel["TodolistCard"]}>
-            <h1 className={styel["title"]}>Задача: {id}</h1>
-            <div className={styel["item"]}>
-                <p
-                    className={styel["todos-content"]}
-                    style={{ wordBreak: "break-word" }}
-                >
-                    {getTodoById?.title}
-                </p>
-            </div>
-            <div className={styel["buttons"]}>
-                <NavLink to={`/`}>
-                    <button
-                        className={styel["Back-button"]}
-                        title="Вернуться к списку задач"
+        <>
+            {isLoading && (
+                <div className={style["loader-background"]}>
+                    <div className={style["loader"]}></div>
+                </div>
+            )}
+            <div className={style["TodolistCard"]}>
+                {cardErrorMessage !== "" && !isLoading && (
+                    <div className={style["errorWindow"]}>
+                        <h2>{cardErrorMessage}</h2>
+                        <NavLink to={"/"}>
+                            <button
+                                onClick={() => {
+                                    setCardErrorMessage("");
+                                }}
+                                className={style["closeErrorWindow"]}
+                            >
+                                OK
+                            </button>
+                        </NavLink>
+                    </div>
+                )}
+                <h1 className={style["title"]}>Задача: {id}</h1>
+                <div className={style["item"]}>
+                    <p
+                        className={style["todos-content"]}
+                        style={{ wordBreak: "break-word" }}
                     >
-                        ⭠
-                    </button>
-                </NavLink>
-                <button
-                    title="Редактировать задачу"
-                    className={styel["Edit-button"]}
-                    onClick={() => {
-                        setUpdateInputValue(getTodoById?.title);
-                        setUpdateButtonClick(true);
-                        setUpdateId(id);
-                    }}
-                >
-                    &#9998;
-                </button>
-                <NavLink to={`/`}>
+                        {todo.title}
+                        {!isLoading && todo.title === undefined && (
+                            <p>Данная задача не найдена</p>
+                        )}
+                    </p>
+                </div>
+                <div className={style["buttons"]}>
+                    <NavLink to={"/"}>
+                        <button
+                            title="Вернуться к списку задач"
+                            className={style["Back-button"]}
+                        >
+                            ⭠
+                        </button>
+                    </NavLink>
                     <button
+                        disabled={isLoading}
+                        title="Редактировать задачу"
+                        className={style["Edit-button"]}
+                        onClick={() => {
+                            setUpdateInputValue(updateInputValue);
+                            setUpdateButtonClick(true);
+                        }}
+                    >
+                        &#9998;
+                    </button>
+                    <button
+                        disabled={isLoading}
                         title="Удалить задачу"
-                        className={styel["Delete-button"]}
+                        className={style["Delete-button"]}
                         onClick={() => {
                             requestDeleteTodo(id);
-                            setRefreshPage(!refreshPage);
+                            setUpdateButtonClick(false);
                         }}
                     >
                         &#x2716;
                     </button>
-                </NavLink>
-            </div>
-            <div className={styel["buttons"]}>
-                {updateButtonClicked && (
-                    <div className={styel["modal"]}>
-                        <div className={styel["modal-content"]}>
-                            <h2>Введите новый текст для задачи</h2>
-                            <input
-                                placeholder="Новый текст для задачи"
-                                className={styel["modal-input"]}
-                                type="text"
-                                value={updateInputValue}
-                                onChange={(e) =>
-                                    setUpdateInputValue(e.target.value)
-                                }
-                            />
-                            <NavLink to={`/`}>
+                </div>
+                <div className={style["buttons"]}>
+                    {updateButtonClicked && (
+                        <div className={style["modal"]}>
+                            <div className={style["modal-content"]}>
+                                <h2>Введите новый текст для задачи</h2>
+                                <input
+                                    placeholder="Новый текст для задачи"
+                                    className={style["modal-input"]}
+                                    type="text"
+                                    value={updateInputValue}
+                                    onChange={(e) =>
+                                        setUpdateInputValue(e.target.value)
+                                    }
+                                />
                                 <button
                                     onClick={() => {
-                                        requestUpdateTodo(updateInputValue, id);
+                                        requestUpdateTodo(updateInputValue);
                                         setUpdateButtonClick(false);
-                                        setUpdateInputValue("");
                                     }}
-                                    className={styel["modal-button"]}
+                                    className={style["modal-button"]}
                                 >
                                     &#x2714; Обновить
                                 </button>
-                            </NavLink>
-                            <button
-                                onClick={() => {
-                                    setUpdateButtonClick(false);
-                                }}
-                                className={styel["modal-button"]}
-                            >
-                                &#x2716; Закрыть
-                            </button>
+                                <button
+                                    onClick={() => {
+                                        setUpdateButtonClick(false);
+                                        setUpdateInputValue("");
+                                    }}
+                                    className={style["modal-button"]}
+                                >
+                                    &#x2716; Закрыть
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
-        </div>
+        </>
     );
 };
